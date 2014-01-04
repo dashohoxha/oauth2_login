@@ -1,0 +1,163 @@
+<?php
+/**
+ * @file
+ * Provides OAuth2 Login functionality.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function oauth2_login_help($path, $arg) {
+  $help = '';
+  switch($path)
+    {
+      case 'admin/config/people/oauth2_login':
+        $oauth2_server = variable_get('oauth2_login_oauth2_server', '');
+        $help = t('<p>The module OAuth2 Login is used to allow the users
+of another Drupal site to login to your site. This is done through OAuth2
+authentication. On login the users are redirected to the login of the other
+Drupal site, and after they login there, they are redirected back to this
+site.</p>
+<p>For this to work, the module
+<a href="https://github.com/dashohoxha/oauth2_loginprovider" target="_blank">
+OAuth2 Login Provider</a> must be installed on the other site, and a client
+that corresponds to this site must be registered there (on the path
+<a href="!oauth2_clients_config" target="_blank">admin/structure/oauth2-servers/manage/oauth2/clients</a>).
+On that client, you must set the <strong>Redirect URI</strong> to:
+<strong>!redirect_uri</strong></p>
+<p>On the configuration of OAuth2 Login you should put the
+<strong>Server URL</strong> (base url) of the remote site,
+and the <strong>Client ID</strong> and <strong>Client secret</strong>
+of the registered client.</p>
+<p>To customize the details of login, play with the
+<a href="hybridauth" target="_blank">settings of HybridAuth</a></p>',
+                array(
+                  '!oauth2_clients_config' => $oauth2_server . '/admin/structure/oauth2-servers/manage/oauth2/clients',
+                  '!redirect_uri' => url('oauth2/authorized', array('absolute' => TRUE)),
+                )
+        );
+        break;
+    }
+
+  return $help;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function oauth2_login_menu() {
+  $items = array();
+
+  $items['admin/config/people/oauth2_login'] = array(
+    'title'            => 'OAuth2 Login',
+    'description'      => 'Login through the OAuth2 Login Provider of another Drupal site.',
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('oauth2_login_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+    'file'             => 'oauth2_login.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_menu_alter().
+ *
+ * Change menu user/login.
+ */
+function oauth2_login_menu_alter(&$items) {
+  $enabled = variable_get('oauth2_login_enabled', FALSE);
+  if ($enabled) {
+    $items['user/login'] = array(
+      'type'            => MENU_NORMAL_ITEM,
+      'title'           => 'Login with OAuth2',
+      'description'     => 'Login with the account of another Drupal site, using OAuth2.',
+      'page callback'   => 'oauth2_login_callback',
+      'access callback' => 'user_is_anonymous',
+    );
+  }
+}
+
+/**
+ * Callback function for menu user/login.
+ */
+function oauth2_login_callback() {
+  drupal_goto('hybridauth/window/DrupalOAuth2', array(
+      'query' => array(
+        'destination'=>'user/login',
+        'destination_error'=>'user',
+      )
+    ));
+}
+
+/**
+ * Implements hook_hybridauth_provider_config_alter().
+ */
+function oauth2_login_hybridauth_provider_config_alter(&$hybridauth_config, $provider_id) {
+  if ($provider_id != 'DrupalOAuth2')  return;
+
+  $state = md5(uniqid(rand(), TRUE));
+  $hybridauth_config['state'] = $state;
+  $hybridauth_config['redirect_uri'] = oauth2_client_get_redirect_uri();
+  oauth2_client_set_redirect($state, array(
+      'uri' => 'hybridauth/endpoint',
+      'params' => array(
+        'hauth.done' => 'DrupalOAuth2',
+      )
+    ));
+}
+
+/**
+ * Implements hook_hybridauth_user_login().
+ *
+ * Invoked when a user has logged in through HybridAuth.
+ * @param object $account
+ *   User account object.
+ * @param array $data
+ *   HybridAuth identity data.
+ */
+function oauth2_login_hybridauth_user_login($account, $data) {
+  $hybridauth = hybridauth_get_instance();
+  if (!$hybridauth or !is_object($hybridauth)) { return; }
+  $adapter = $hybridauth->getAdapter('DrupalOAuth2');
+  $oauth2 = $adapter->adapter;
+
+  $client_id = $oauth2->api->client_id;
+  $token = array(
+    'access_token' => $oauth2->api->access_token,
+    'refresh_token' => $oauth2->api->refresh_token,
+    'expires_in' => $oauth2->api->access_token_expires_in,
+    'expiration_time' => $oauth2->api->access_token_expires_at,
+    'scope' => $oauth2->scope,
+  );
+  oauth2_client_set_token($client_id, $token);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for hybridauth_admin_provider_settings.
+ */
+function oauth2_login_form_hybridauth_admin_provider_settings_alter(&$form, &$form_state, $form_id) {
+
+  $provider_id = $form_state['build_info']['args'][0];
+  if ($provider_id != 'DrupalOAuth2')  return;
+
+  // Add a callback function on submit.
+  $form['#submit'][] = 'oauth2_login_admin_get_settings';
+}
+
+/**
+ * Synchronize settings with hybridauth_DrupalOAuth2.
+ */
+function oauth2_login_admin_get_settings() {
+  $oauth2_server = variable_get('hybridauth_provider_DrupalOAuth2_oauth2_server');
+  $client_id = variable_get('hybridauth_provider_DrupalOAuth2_keys_id');
+  $client_secret = variable_get('hybridauth_provider_DrupalOAuth2_keys_secret');
+  $skipssl = variable_get('hybridauth_provider_DrupalOAuth2_skipssl');
+  $proxy = variable_get('hybridauth_provider_DrupalOAuth2_proxy');
+
+  variable_set('oauth2_login_oauth2_server', $oauth2_server);
+  variable_set('oauth2_login_client_id', $client_id);
+  variable_set('oauth2_login_client_secret', $client_secret);
+  variable_set('oauth2_login_skipssl', $skipssl);
+  variable_set('oauth2_login_proxy', $proxy);
+}

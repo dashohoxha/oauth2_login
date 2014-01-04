@@ -1,0 +1,30 @@
+<?php
+/**
+ * @file
+ * Install funcions.
+ * Install, update and uninstall functions for OAuth2 Login.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function oauth2_login_install() {
+  variable_set('hybridauth_provider_DrupalOAuth2_enabled', TRUE);
+  variable_set('hybridauth_duplicate_emails', '2');
+  variable_set('hybridauth_pictures', 1);
+  variable_set('hybridauth_display_name', '[user:hybridauth:firstName] [user:hybridauth:lastName]');
+  variable_set('hybridauth_username', '[user:hybridauth:firstName] [user:hybridauth:lastName]');
+  variable_set('hybridauth_email_verification', 1);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function oauth2_login_uninstall() {
+  variable_del('oauth2_login_enabled');
+  variable_del('oauth2_login_oauth2_server');
+  variable_del('oauth2_login_client_id');
+  variable_del('oauth2_login_client_secret');
+  variable_del('oauth2_login_skipssl');
+  variable_del('oauth2_login_proxy');
+}
