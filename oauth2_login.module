@@ -68,6 +68,7 @@ function oauth2_login_menu() {
 function oauth2_login_menu_alter(&$items) {
   $enabled = variable_get('oauth2_login_enabled', FALSE);
   if ($enabled) {
+    $items['user/local-login'] = $items['user/login'];
     $items['user/login'] = array(
       'type'            => MENU_NORMAL_ITEM,
       'title'           => 'Login with OAuth2',
@@ -85,7 +86,7 @@ function oauth2_login_callback() {
   drupal_goto('hybridauth/window/DrupalOAuth2', array(
       'query' => array(
         'destination'=>'user/login',
-        'destination_error'=>'user',
+        'destination_error'=>'user/local-login',
       )
     ));
 }
