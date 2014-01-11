@@ -123,7 +123,6 @@ function oauth2_login_hybridauth_user_login($account, $data) {
   $adapter = $hybridauth->getAdapter('DrupalOAuth2');
   $oauth2 = $adapter->adapter;
 
-  $client_id = $oauth2->api->client_id;
   $token = array(
     'access_token' => $oauth2->api->access_token,
     'refresh_token' => $oauth2->api->refresh_token,
@@ -131,7 +130,11 @@ function oauth2_login_hybridauth_user_login($account, $data) {
     'expiration_time' => $oauth2->api->access_token_expires_at,
     'scope' => $oauth2->scope,
   );
-  oauth2_client_set_token($client_id, $token);
+  $token_endpoint = $oauth2->api->token_endpoint;
+  $client_id = $oauth2->api->client_id;
+  $auth_flow = 'server-side';
+  $id = md5($token_endpoint . $client_id . $auth_flow);
+  oauth2_client_set_token($id, $token);
 }
 
 /**
