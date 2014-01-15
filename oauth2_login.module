@@ -56,27 +56,14 @@ function oauth2_login_menu() {
     'access arguments' => array('administer site configuration'),
     'file'             => 'oauth2_login.admin.inc',
   );
+  $items['user/oauth2_login'] = array(
+    'title'           => 'Login',
+    'description'     => 'Login with OAuth2.',
+    'page callback'   => 'oauth2_login_callback',
+    'access callback' => 'user_is_anonymous',
+  );
 
   return $items;
-}
-
-/**
- * Implements hook_menu_alter().
- *
- * Change menu user/login.
- */
-function oauth2_login_menu_alter(&$items) {
-  $enabled = variable_get('oauth2_login_enabled', FALSE);
-  if ($enabled) {
-    $items['user/local-login'] = $items['user/login'];
-    $items['user/login'] = array(
-      'type'            => MENU_NORMAL_ITEM,
-      'title'           => 'Login with OAuth2',
-      'description'     => 'Login with the account of another Drupal site, using OAuth2.',
-      'page callback'   => 'oauth2_login_callback',
-      'access callback' => 'user_is_anonymous',
-    );
-  }
 }
 
 /**
@@ -86,7 +73,7 @@ function oauth2_login_callback() {
   drupal_goto('hybridauth/window/DrupalOAuth2', array(
       'query' => array(
         'destination'=>'user/login',
-        'destination_error'=>'user/local-login',
+        'destination_error'=>'user/login',
       )
     ));
 }
@@ -130,7 +117,7 @@ function oauth2_login_hybridauth_user_login($account, $data) {
     'expiration_time' => $oauth2->api->access_token_expires_at,
     'scope' => $oauth2->scope,
   );
-  $token_endpoint = $oauth2->api->token_endpoint;
+  $token_endpoint = $oauth2->api->token_url;
   $client_id = $oauth2->api->client_id;
   $auth_flow = 'server-side';
   $id = md5($token_endpoint . $client_id . $auth_flow);
