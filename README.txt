@@ -15,3 +15,7 @@ https://client.example.org/oauth2/authorized
 The file 'oauth2_login.make' can be useful for downloading the
 dependencies.  The configuration of this module is done on:
 admin/config/people/oauth2_login
+
+The test file helps to understand the configurations that should be
+done on the server and on the client:
+https://github.com/dashohoxha/oauth2_login/blob/7.x-1.x/tests/oauth2_login.test#L22
