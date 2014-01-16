@@ -66,7 +66,16 @@ class OAuth2LoginTestCase extends DrupalWebTestCase {
   public function testOAuth2Login() {
     $this->drupalGet('');
     $this->assertLinkByHref('user/oauth2_login', 0, 'There is a user/oauth2_login link on the home page.');
-    $this->clickLink(t('Login'));
+
+    //$this->clickLink(t('Login'));
+    $this->drupalPost(
+      'user/oauth2_login',
+      array(
+        'name' => 'user1',
+        'pass' => 'pass1',
+      ),
+      'Log in'
+    );
   }
 
 }
