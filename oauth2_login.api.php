@@ -5,6 +5,25 @@
  */
 
 /**
+ * Login with OAuth2.
+ */
+function oauth2_login($destination =NULL, $destination_error =NULL) {
+  if ($destination === NULL) {
+    $destination = drupal_get_destination();
+    $destination = $destination['destination'];
+  }
+  if ($destination_error === NULL) {
+    $destination_error = 'user/login';
+  }
+  drupal_goto('hybridauth/window/DrupalOAuth2', array(
+      'query' => array(
+        'destination' => $destination,
+        'destination_error' => $destination_error,
+      )
+    ));
+}
+
+/**
  * Implements hook_oauth2_login_enabled().
  *
  * This hook is called when the configuration on

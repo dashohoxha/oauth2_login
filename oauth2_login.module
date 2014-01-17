@@ -67,13 +67,27 @@ function oauth2_login_menu() {
 }
 
 /**
- * Callback function for menu user/login.
+ * Callback function for the menu user/oauth2_login.
  */
 function oauth2_login_callback() {
+  oauth2_login($destination = 'user');
+}
+
+/**
+ * Login with OAuth2.
+ */
+function oauth2_login($destination =NULL, $destination_error =NULL) {
+  if ($destination === NULL) {
+    $destination = drupal_get_destination();
+    $destination = $destination['destination'];
+  }
+  if ($destination_error === NULL) {
+    $destination_error = 'user/login';
+  }
   drupal_goto('hybridauth/window/DrupalOAuth2', array(
       'query' => array(
-        'destination'=>'user/login',
-        'destination_error'=>'user/login',
+        'destination' => $destination,
+        'destination_error' => $destination_error,
       )
     ));
 }
