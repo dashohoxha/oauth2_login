@@ -77,6 +77,12 @@ function oauth2_login_callback() {
  * Login with OAuth2.
  */
 function oauth2_login($destination =NULL, $destination_error =NULL) {
+  $enabled = variable_get('oauth2_login_enabled', FALSE);
+  if (!$enabled) {
+    drupal_goto('user/login', array('query' => drupal_get_destination()));
+    return;
+  }
+
   if ($destination === NULL) {
     $destination = drupal_get_destination();
     $destination = $destination['destination'];
@@ -84,6 +90,7 @@ function oauth2_login($destination =NULL, $destination_error =NULL) {
   if ($destination_error === NULL) {
     $destination_error = 'user/login';
   }
+
   drupal_goto('hybridauth/window/DrupalOAuth2', array(
       'query' => array(
         'destination' => $destination,
@@ -97,6 +104,7 @@ function oauth2_login($destination =NULL, $destination_error =NULL) {
  */
 function oauth2_login_hybridauth_provider_config_alter(&$hybridauth_config, $provider_id) {
   if ($provider_id != 'DrupalOAuth2')  return;
+  if (isset($_SESSION['oauth2_login']['DrupalOAuth2']))  return;
 
   $state = md5(uniqid(rand(), TRUE));
   $hybridauth_config['state'] = $state;
@@ -107,6 +115,23 @@ function oauth2_login_hybridauth_provider_config_alter(&$hybridauth_config, $pro
         'hauth.done' => 'DrupalOAuth2',
       )
     ));
+  $_SESSION['oauth2_login']['DrupalOAuth2'] = TRUE;
+}
+
+/**
+ * Implements hook_hybridauth_profile_alter().
+ */
+function oauth2_login_hybridauth_profile_alter($profile) {
+  global $base_url;
+  $oauth2_server = variable_get('oauth2_login_oauth2_server', '');
+  if ( isset($_SESSION['oauth2_login']['DrupalOAuth2'])
+    and $oauth2_server == $base_url )
+    {
+      // This is a dirty trick to make hybridauth work well
+      // in local configurations (where the oauth2 client and server
+      // are on the same application).
+      $GLOBALS['user'] = drupal_anonymous_user();
+    }
 }
 
 /**

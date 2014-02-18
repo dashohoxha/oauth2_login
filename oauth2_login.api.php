@@ -15,12 +15,19 @@ function oauth2_login($destination =NULL, $destination_error =NULL) {
   if ($destination_error === NULL) {
     $destination_error = 'user/login';
   }
-  drupal_goto('hybridauth/window/DrupalOAuth2', array(
-      'query' => array(
-        'destination' => $destination,
-        'destination_error' => $destination_error,
-      )
-    ));
+
+  $enabled = variable_get('oauth2_login_enabled', FALSE);
+  if (!$enabled) {
+    drupal_goto('user', array('query' => drupal_get_destination()));
+  }
+  else {
+    drupal_goto('hybridauth/window/DrupalOAuth2', array(
+        'query' => array(
+          'destination' => $destination,
+          'destination_error' => $destination_error,
+        )
+      ));
+  }
 }
 
 /**
