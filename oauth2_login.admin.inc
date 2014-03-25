@@ -102,7 +102,6 @@ function oauth2_login_admin_set_settings() {
   $proxy = variable_get('oauth2_login_proxy', '');
 
   variable_set('hybridauth_provider_DrupalOAuth2_oauth2_server', $oauth2_server);
-  variable_set('hybridauth_provider_DrupalOAuth2_keys_key', $client_id);
   variable_set('hybridauth_provider_DrupalOAuth2_keys_id', $client_id);
   variable_set('hybridauth_provider_DrupalOAuth2_keys_secret', $client_secret);
   variable_set('hybridauth_provider_DrupalOAuth2_skipssl', $skipssl);
