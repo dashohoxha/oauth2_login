@@ -178,13 +178,23 @@ function oauth2_login_admin_get_settings() {
  * Implements hook_user_logout().
  */
 function oauth2_login_user_logout($account) {
-  drupal_register_shutdown_function('_logout_from_oauth2_server');
+  // Get the current access_token.
+  $oauth2_server = variable_get('oauth2_login_oauth2_server', '');
+  $token_endpoint = $oauth2_server . '/oauth2/token';
+  $client_id = variable_get('oauth2_login_client_id', '');
+  $auth_flow = 'server-side';
+  $id = md5($token_endpoint . $client_id . $auth_flow);
+  $token = oauth2_client_get_token($id);
+
+  drupal_register_shutdown_function('_logout_from_oauth2_server', $token['access_token']);
 }
 
 /**
  * Logout from the oauth2 server as well.
  */
-function _logout_from_oauth2_server() {
-  $oauth2_server = variable_get('oauth2_login_oauth2_server');
-  drupal_goto($oauth2_server . '/user/logout');
+function _logout_from_oauth2_server($token) {
+  $oauth2_server = variable_get('oauth2_login_oauth2_server', '');
+  drupal_goto($oauth2_server . '/user/logout',
+    array('query' => array('token' => $token))
+  );
 }
