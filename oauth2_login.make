@@ -3,10 +3,10 @@ core = 7.x
 
 defaults[projects][subdir] = "contrib"
 
-;projects[oauth2_client][version] = "1.0"
-projects[oauth2_client][type] = "module"
-projects[oauth2_client][download][type] = "git"
-projects[oauth2_client][download][url] = "https://github.com/dashohoxha/oauth2_client.git"
+projects[oauth2_client][version] = "1.x-dev"
+;projects[oauth2_client][type] = "module"
+;projects[oauth2_client][download][type] = "git"
+;projects[oauth2_client][download][url] = "https://github.com/dashohoxha/oauth2_client.git"
 ;projects[oauth2_client][download][branch] = "7.x-1.x"
 
 projects[hybridauth][version] = "2.8"
