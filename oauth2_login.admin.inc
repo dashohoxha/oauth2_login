@@ -87,7 +87,7 @@ function oauth2_login_admin_settings() {
 
   $form = system_settings_form($form);
   $form['#submit'][] = 'oauth2_login_admin_set_settings';
-  $form['#submit'][] = 'oauth2_login_update_login_link';
+  $form['#submit'][] = 'oauth2_login_call_hook_enabled';
   return $form;
 }
 
@@ -109,24 +109,9 @@ function oauth2_login_admin_set_settings() {
 }
 
 /**
- * Update (enable/disable) the oauth2 login link on the user menu.
+ * Call hook_oauth2_login_enabled() for all modules.
  */
-function oauth2_login_update_login_link() {
+function oauth2_login_call_hook_enabled() {
   $enabled = variable_get('oauth2_login_enabled', FALSE);
-  db_update('menu_links')
-    ->fields(array(
-        'hidden' => ($enabled ? 0 : 1),
-      ))
-    ->condition('menu_name', 'user-menu')
-    ->condition('link_path', 'user/oauth2_login')
-    ->condition('router_path', 'user/oauth2_login')
-    ->condition('plid', 0)
-    ->condition('module', 'system')
-    ->execute();
-
-  // Call hook_oauth2_login_enabled() for all modules.
   module_invoke_all('oauth2_login_enabled', $enabled);
-
-  // Clear the cache and rebuild the menu.
-  menu_cache_clear('user-menu');
 }
