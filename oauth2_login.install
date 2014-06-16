@@ -16,38 +16,20 @@ function oauth2_login_enable() {
   variable_set('hybridauth_username', '[user:hybridauth:firstName] [user:hybridauth:lastName]');
   variable_set('hybridauth_email_verification', 1);
 
-  // Add a Login link at the header of the page.
-  $menu_link = array(
-    'menu_name' => 'user-menu',
-    'link_path' => 'user/oauth2_login',
-    'router_path' => 'user/oauth2_login',
-    'link_title' => 'Login',
-    'plid' => '0',
-    'module' => 'system',
-  );
-  menu_link_save($menu_link);
-
-  // Enable the oauth2 login link.
+  // Enable the oauth2 login.
   variable_set('oauth2_login_enabled', TRUE);
   module_load_include('inc', 'oauth2_login', 'oauth2_login.admin');
-  oauth2_login_update_login_link();
+  oauth2_login_call_hook_enabled();
 }
 
 /**
  * Implements hook_disable().
  */
 function oauth2_login_disable() {
-  // Disable the oauth2 login link.
+  // Disable the oauth2 login.
   variable_set('oauth2_login_enabled', FALSE);
   module_load_include('inc', 'oauth2_login', 'oauth2_login.admin');
-  oauth2_login_update_login_link();
-
-  // Delete the link of OAuth2 Login.
-  $query = "DELETE FROM {menu_links}
-            WHERE menu_name='user-menu'
-              AND link_path='user/oauth2_login'
-              AND router_path='user/oauth2_login'";
-  db_query($query);
+  oauth2_login_call_hook_enabled();
 
   // Delete variables.
   variable_del('oauth2_login_enabled');
