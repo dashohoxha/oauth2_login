@@ -178,8 +178,19 @@ function oauth2_login_admin_get_settings() {
  * Implements hook_user_logout().
  */
 function oauth2_login_user_logout($account) {
-  // Get the current access_token.
+  // If the client and the server are on the same application
+  // then no redirection needs to e done.
   $oauth2_server = variable_get('oauth2_login_oauth2_server', '');
+  if (empty($oauth2_server)) {
+    return;
+  }
+  $server_host = parse_url($oauth2_server, PHP_URL_HOST);
+  $base_host = parse_url($GLOBALS['base_url'], PHP_URL_HOST);
+  if ($server_host == $base_host) {
+    return;
+  }
+
+  // Get the current access_token.
   $token_endpoint = $oauth2_server . '/oauth2/token';
   $client_id = variable_get('oauth2_login_client_id', '');
   $auth_flow = 'server-side';
