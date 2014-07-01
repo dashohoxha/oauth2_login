@@ -12,6 +12,7 @@ projects[oauth2_client][version] = "1.x-dev"
 projects[hybridauth][version] = "2.8"
 projects[hybridauth][patch][] = "https://drupal.org/files/issues/hybridauth-2164869-Adding_support_for_DrupalOAuth2_provider.patch"
 projects[hybridauth][patch][] = "https://drupal.org/files/issues/hybridauth-2164869-2-Small_fix_on_the_previous_patch.patch"
+projects[hybridauth][patch][] = "https://www.drupal.org/files/issues/hybridauth-2296133-library-path.patch"
 
 ;libraries[hybridauth][directory_name] = "hybridauth-2.1.2"
 ;libraries[hybridauth][download][type] = "get"
