@@ -12,7 +12,6 @@ testing_dir=$drupal_dir/profiles/testing
 module_list="
     oauth2_login
     hybridauth
-    hybridauth_DrupalOAuth2
     oauth2_client
     oauth2_loginprovider
     services

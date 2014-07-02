@@ -5,7 +5,6 @@ core = 7.x
 
 dependencies[] = libraries
 dependencies[] = hybridauth
-dependencies[] = hybridauth_DrupalOAuth2
 dependencies[] = oauth2_client
 
 configure = admin/config/people/oauth2_login
