@@ -5,16 +5,19 @@ other Drupal site, and after they login there, they are redirected
 back to this site.
 
 For this to work, the module OAuth2 Login Provider
-(https://github.com/dashohoxha/oauth2_loginprovider) must be installed
-on the other site, and a client that corresponds to this site must be
+(https://drupal.org/project/oauth2_loginprovider) must be installed on
+the other site, and a client that corresponds to this site must be
 registered there (on the path
-'admin/structure/oauth2-servers/manage/oauth2/clients').
-On that client, you must set the Redirect URI to:
+'admin/structure/oauth2-servers/manage/oauth2/clients').  On that
+client, you must set the Redirect URI to:
 https://client.example.org/oauth2/authorized
 
-The file 'oauth2_login.make' can be useful for downloading the
-dependencies.  The configuration of this module is done on:
-admin/config/people/oauth2_login
+See the file 'oauth2_login.make' for downloading the dependencies.
+Copy 'libraries/hybridauth-drupaloauth2/DrupalOAuth2.php' to
+'libraries/hybridauth/additional-providers/hybridauth-drupaloauth2/Providers/'
+
+The configuration of this module is done on:
+'admin/config/people/oauth2_login'
 
 The test file helps to understand the configurations that should be
 done on the server and on the client:
