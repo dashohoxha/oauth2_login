@@ -14,7 +14,7 @@ https://client.example.org/oauth2/authorized
 
 See the file 'oauth2_login.make' for downloading the dependencies.
 Copy 'libraries/hybridauth-drupaloauth2/DrupalOAuth2.php' to
-'libraries/hybridauth/additional-providers/hybridauth-drupaloauth2/Providers/'
+'libraries/hybridauth/hybridauth/Hybrid/Providers/'.
 
 The configuration of this module is done on:
 'admin/config/people/oauth2_login'
