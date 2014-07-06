@@ -16,6 +16,12 @@ function oauth2_login_enable() {
   variable_set('hybridauth_username', '[user:hybridauth:firstName] [user:hybridauth:lastName]');
   variable_set('hybridauth_email_verification', 1);
 
+  // Make sure that users have the permission to use hybridauth.
+  foreach (array('anonymous user', 'authenticated user') as $role_name) {
+    $role = user_role_load_by_name($role_name);
+    user_role_grant_permissions($role->rid, array('use hybridauth'));
+  }
+
   // Enable the oauth2 login.
   variable_set('oauth2_login_enabled', TRUE);
   module_load_include('inc', 'oauth2_login', 'oauth2_login.admin');
@@ -38,4 +44,12 @@ function oauth2_login_disable() {
   variable_del('oauth2_login_client_secret');
   variable_del('oauth2_login_skipssl');
   variable_del('oauth2_login_proxy');
+
+  /*
+  // Remove the permission for using hybridauth.
+  foreach (array('anonymous user', 'authenticated user') as $role_name) {
+    $role = user_role_load_by_name($role_name);
+    user_role_revoke_permissions($role->rid, array('use hybridauth'));
+  }
+  */
 }
