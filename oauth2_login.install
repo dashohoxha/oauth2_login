@@ -15,6 +15,13 @@ function oauth2_login_enable() {
   variable_set('hybridauth_display_name', '[user:hybridauth:firstName] [user:hybridauth:lastName]');
   variable_set('hybridauth_username', '[user:hybridauth:firstName] [user:hybridauth:lastName]');
   variable_set('hybridauth_email_verification', 1);
+  variable_set('hybridauth_forms', array (
+      'user_login' => 0,
+      'user_login_block' => 0,
+      'user_register_form' => 0,
+      'comment_form' => 0,
+    ));
+
 
   // Make sure that users have the permission to use hybridauth.
   foreach (array('anonymous user', 'authenticated user') as $role_name) {
