@@ -12,8 +12,7 @@ function oauth2_login_enable() {
   variable_set('hybridauth_provider_DrupalOAuth2_enabled', TRUE);
   variable_set('hybridauth_duplicate_emails', '2');
   variable_set('hybridauth_pictures', 1);
-  variable_set('hybridauth_display_name', '[user:hybridauth:firstName] [user:hybridauth:lastName]');
-  variable_set('hybridauth_username', '[user:hybridauth:firstName] [user:hybridauth:lastName]');
+  variable_set('hybridauth_username', '[user:hybridauth:displayName]');
   variable_set('hybridauth_email_verification', 1);
   variable_set('hybridauth_forms', array (
       'user_login' => 0,
