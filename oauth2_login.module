@@ -95,7 +95,9 @@ function oauth2_login($destination =NULL, $destination_error =NULL) {
       'query' => array(
         'destination' => $destination,
         'destination_error' => $destination_error,
-      )
+      ) + (isset($_GET['proxy']) ?
+            array('proxy' => $_GET['proxy']) :
+            array())
     ));
 }
 
@@ -138,11 +140,19 @@ function oauth2_login_hybridauth_user_login($account, $data) {
     'expiration_time' => $oauth2->api->access_token_expires_at,
     'scope' => $oauth2->scope,
   );
-  $token_endpoint = $oauth2->api->token_url;
-  $client_id = $oauth2->api->client_id;
-  $auth_flow = 'server-side';
-  $id = md5($token_endpoint . $client_id . $auth_flow);
-  oauth2_client_set_token($id, $token);
+
+  if (isset($_GET['proxy']) and $_GET['proxy'] == 'true') {
+    $json_token = json_encode($token);
+    print "<script>opener.postMessage($json_token, '*');</script>";
+    drupal_exit();
+  }
+  else {
+    $token_endpoint = $oauth2->api->token_url;
+    $client_id = $oauth2->api->client_id;
+    $auth_flow = 'server-side';
+    $id = md5($token_endpoint . $client_id . $auth_flow);
+    oauth2_client_set_token($id, $token);
+  }
 }
 
 /**
