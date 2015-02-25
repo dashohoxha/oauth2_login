@@ -62,6 +62,18 @@ function oauth2_login_menu() {
     'page callback'   => 'oauth2_login_callback',
     'access callback' => 'user_is_anonymous',
   );
+  $items['user/proxy_login'] = array(
+    'title'           => 'Proxy Login',
+    'description'     => 'OAuth2 Proxy Login For Mobile Apps.',
+    'page callback'   => 'proxy_login_callback',
+    'access callback' => TRUE,
+  );
+  $items['user/proxy_logout'] = array(
+    'title'           => 'Proxy Logout',
+    'description'     => 'OAuth2 Proxy Logout For Mobile Apps.',
+    'page callback'   => 'proxy_logout_callback',
+    'access callback' => TRUE,
+  );
 
   return $items;
 }
@@ -71,6 +83,51 @@ function oauth2_login_menu() {
  */
 function oauth2_login_callback() {
   oauth2_login($destination = 'user');
+}
+
+/**
+ * Callback function for the menu user/proxy_login.
+ */
+function proxy_login_callback() {
+  if (user_is_anonymous()) {
+    drupal_goto('user/oauth2_login', array('query' => array('proxy' => 'true')));
+  }
+  else {
+    // Get the current access_token.
+    $server_url = variable_get('oauth2_login_oauth2_server', '');
+    $token_endpoint = $server_url . '/oauth2/token';
+    $client_id = variable_get('oauth2_login_client_id', '');
+    $auth_flow = 'server-side';
+    $id = md5($token_endpoint . $client_id . $auth_flow);
+    $token = oauth2_client_get_token($id);
+
+    if (empty($token['access_token'])) {
+      // Logout user and redirect to login.
+      module_invoke_all('user_logout', $_GLOBALS['user']);
+      session_destroy();
+      drupal_goto('user/oauth2_login', array('query' => array('proxy' => 'true')));
+    }
+    else {
+      // Return the token to the mobile app.
+      $json_token = json_encode($token);
+      print "<script>opener.postMessage($json_token, '*');</script>";
+      drupal_exit();
+    }
+  }
+}
+
+/**
+ * Callback function for the menu user/proxy_logout.
+ */
+function proxy_logout_callback() {
+  print "<script>window.close();</script>";
+  if (user_is_anonymous()) {
+    drupal_exit();
+  }
+  else {
+    module_load_include('pages.inc', 'user');
+    user_logout();
+  }
 }
 
 /**
