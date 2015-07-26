@@ -204,7 +204,12 @@ function oauth2_login_hybridauth_provider_config_alter(&$hybridauth_config, $pro
 function oauth2_login_hybridauth_user_login($account, $data) {
   $hybridauth = hybridauth_get_instance();
   if (!$hybridauth or !is_object($hybridauth)) { return; }
-  $adapter = $hybridauth->getAdapter('DrupalOAuth2');
+  try {
+    $adapter = $hybridauth->getAdapter('DrupalOAuth2');
+  catch (Exception $e) {
+    return;
+  }
+
   $oauth2 = $adapter->adapter;
 
   $token = array(
