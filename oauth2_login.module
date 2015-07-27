@@ -209,6 +209,7 @@ function oauth2_login_hybridauth_user_login($account, $data) {
   if (!$hybridauth or !is_object($hybridauth)) { return; }
   try {
     $adapter = $hybridauth->getAdapter('DrupalOAuth2');
+  }
   catch (Exception $e) {
     return;
   }
