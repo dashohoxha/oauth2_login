@@ -99,9 +99,8 @@ function oauth2_proxy_callback($action) {
  */
 function _oauth2_proxy_login() {
   if (user_is_anonymous()) {
-    $query = array('proxy' => 'true');
-    if (isset($_GET['lng']))  $query['lng'] = $_GET['lng'];
-    if (isset($_GET['proj']))  $query['proj'] = $_GET['proj'];
+    $query = ['proxy' => 'true'] + $_GET;
+    unset($query['q']);
     drupal_goto('user/oauth2_login', array('query' => $query));
   }
   else {
@@ -168,13 +167,11 @@ function oauth2_login($destination =NULL, $destination_error =NULL) {
     $destination_error = 'user/login';
   }
 
-  $query = array(
+  $query = [
     'destination' => $destination,
     'destination_error' => $destination_error,
-  );
-  if (isset($_GET['proxy']))  $query['proxy'] = $_GET['proxy'];
-  if (isset($_GET['lng']))  $query['lng'] = $_GET['lng'];
-  if (isset($_GET['proj']))  $query['proj'] = $_GET['proj'];
+  ] + $_GET;
+  unset($query['q']);
   drupal_goto('hybridauth/window/DrupalOAuth2', array('query' => $query));
 }
 
