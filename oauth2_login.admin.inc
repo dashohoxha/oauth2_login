@@ -11,83 +11,70 @@
  *   An array containing form items to place on the module settings page.
  */
 function oauth2_login_admin_settings() {
-  $form = array(
+  $form = [
     '#type'  => 'fieldset',
     '#title' => t('OAuth2 Login Settings'),
-  );
 
-  $form['oauth2_login_enabled'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Enabled'),
-    '#default_value' => variable_get('oauth2_login_enabled', FALSE),
-    '#description' => t('Check to enable OAuth2 Login.'),
-  );
+    'oauth2_login_enabled' => [
+      '#type' => 'checkbox',
+      '#title' => t('Enabled'),
+      '#default_value' => variable_get('oauth2_login_enabled', FALSE),
+      '#description' => t('Check to enable OAuth2 Login.'),
+    ],
 
-  $form['oauth2_login_oauth2_server'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Server URL'),
-    '#default_value' => variable_get('oauth2_login_oauth2_server', ''),
-    '#description' => t('The URI of the OAuth2 Login Provider.'),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="oauth2_login_enabled"]' => array('checked' => TRUE),
-      ),
-    ),
-  );
+    'oauth2_login_oauth2_server' => [
+      '#type' => 'textfield',
+      '#title' => t('Server URL'),
+      '#default_value' => variable_get('oauth2_login_oauth2_server', ''),
+      '#description' => t('The URI of the OAuth2 Login Provider.'),
+      '#states' => ['visible' => [':input[name="oauth2_login_enabled"]' => ['checked' => TRUE]]],
+    ],
 
-  $form['oauth2_login_client_id'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Client ID'),
-    '#default_value' => variable_get('oauth2_login_client_id', ''),
-    '#description' => t('The Client ID that is registered on the OAuth2 server.'),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="oauth2_login_enabled"]' => array('checked' => TRUE),
-      ),
-    ),
-  );
+    'oauth2_login_client_id' => [
+      '#type' => 'textfield',
+      '#title' => t('Client ID'),
+      '#default_value' => variable_get('oauth2_login_client_id', ''),
+      '#description' => t('The Client ID that is registered on the OAuth2 server.'),
+      '#states' => ['visible' => [':input[name="oauth2_login_enabled"]' => ['checked' => TRUE]]],
+    ],
 
-  $form['oauth2_login_client_secret'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Client secret'),
-    '#default_value' => variable_get('oauth2_login_client_secret', ''),
-    '#description' => t('The Client secret that is registered on the OAuth2 server.'),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="oauth2_login_enabled"]' => array('checked' => TRUE),
-      ),
-    ),
-   );
+    'oauth2_login_client_secret' => [
+      '#type' => 'textfield',
+      '#title' => t('Client secret'),
+      '#default_value' => variable_get('oauth2_login_client_secret', ''),
+      '#description' => t('The Client secret that is registered on the OAuth2 server.'),
+      '#states' => ['visible' => [':input[name="oauth2_login_enabled"]' => ['checked' => TRUE]]],
+    ],
 
-  $form['testing'] = array(
-    '#type'  => 'fieldset',
-    '#title' => t('Settings Useful for Development, Testing and Debug'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-    '#states' => array(
-      'visible' => array(
-        ':input[name="oauth2_login_enabled"]' => array('checked' => TRUE),
-      ),
-    ),
-  );
+    'testing' => [
+      '#type'  => 'fieldset',
+      '#title' => t('Settings Useful for Development, Testing and Debug'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#states' => ['visible' => [':input[name="oauth2_login_enabled"]' => ['checked' => TRUE]]],
 
-  $form['testing']['oauth2_login_skipssl'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Skip SSL'),
-    '#description' => t('Skip checking the SSL certificate.'),
-    '#default_value' => variable_get('oauth2_login_skipssl', FALSE),
-  );
+      'oauth2_login_skipssl' => [
+        '#type' => 'checkbox',
+        '#title' => t('Skip SSL'),
+        '#description' => t('Skip checking the SSL certificate.'),
+        '#default_value' => variable_get('oauth2_login_skipssl', FALSE),
+      ],
 
-  $form['testing']['oauth2_login_proxy'] = array(
-    '#type' => 'textfield',
-    '#title' => t('HTTP Proxy'),
-    '#description' => t('Use an HTTP proxy agent (like <a href="http://mitmproxy.org" target="_blank">http://mitmproxy.org</a>).'),
-    '#default_value' => variable_get('oauth2_login_proxy', ''),
-  );
+      'oauth2_login_proxy' => [
+        '#type' => 'textfield',
+        '#title' => t('HTTP Proxy'),
+        '#description' => t('Use an HTTP proxy agent (like <a href="http://mitmproxy.org" target="_blank">http://mitmproxy.org</a>).'),
+        '#default_value' => variable_get('oauth2_login_proxy', ''),
+      ],
+    ],
+  ];
 
   $form = system_settings_form($form);
-  $form['#submit'][] = 'oauth2_login_admin_set_settings';
-  $form['#submit'][] = 'oauth2_login_call_hook_enabled';
+  $form['#submit'] += [
+    'oauth2_login_admin_set_settings',
+    'oauth2_login_call_hook_enabled',
+  ];
+
   return $form;
 }
 

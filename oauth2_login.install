@@ -23,9 +23,9 @@ function oauth2_login_enable() {
 
 
   // Make sure that users have the permission to use hybridauth.
-  foreach (array('anonymous user', 'authenticated user') as $role_name) {
+  foreach (['anonymous user', 'authenticated user'] as $role_name) {
     $role = user_role_load_by_name($role_name);
-    user_role_grant_permissions($role->rid, array('use hybridauth'));
+    user_role_grant_permissions($role->rid, ['use hybridauth']);
   }
 
   // Enable the oauth2 login.
@@ -53,9 +53,9 @@ function oauth2_login_disable() {
 
   /*
   // Remove the permission for using hybridauth.
-  foreach (array('anonymous user', 'authenticated user') as $role_name) {
+  foreach (['anonymous user', 'authenticated user'] as $role_name) {
     $role = user_role_load_by_name($role_name);
-    user_role_revoke_permissions($role->rid, array('use hybridauth'));
+    user_role_revoke_permissions($role->rid, ['use hybridauth']);
   }
   */
 }

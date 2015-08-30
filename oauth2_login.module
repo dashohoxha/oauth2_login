@@ -31,10 +31,10 @@ and the <strong>Client ID</strong> and <strong>Client secret</strong>
 of the registered client.</p>
 <p>To customize the details of login, play with the
 <a href="hybridauth" target="_blank">settings of HybridAuth</a></p>',
-                array(
+                [
                   '!oauth2_clients_config' => $oauth2_server . '/admin/structure/oauth2-servers/manage/oauth2/clients',
-                  '!redirect_uri' => url('oauth2/authorized', array('absolute' => TRUE)),
-                )
+                  '!redirect_uri' => url('oauth2/authorized', ['absolute' => TRUE]),
+                ]
         );
         break;
     }
@@ -46,28 +46,30 @@ of the registered client.</p>
  * Implements hook_menu().
  */
 function oauth2_login_menu() {
-  $items = array();
+  $items = [
+    'admin/config/people/oauth2_login' => [
+      'title'            => 'OAuth2 Login',
+      'description'      => 'Login through the OAuth2 Login Provider of another Drupal site.',
+      'page callback'    => 'drupal_get_form',
+      'page arguments'   => ['oauth2_login_admin_settings'],
+      'access arguments' => ['administer site configuration'],
+      'file'             => 'oauth2_login.admin.inc',
+    ],
 
-  $items['admin/config/people/oauth2_login'] = array(
-    'title'            => 'OAuth2 Login',
-    'description'      => 'Login through the OAuth2 Login Provider of another Drupal site.',
-    'page callback'    => 'drupal_get_form',
-    'page arguments'   => array('oauth2_login_admin_settings'),
-    'access arguments' => array('administer site configuration'),
-    'file'             => 'oauth2_login.admin.inc',
-  );
-  $items['user/oauth2_login'] = array(
-    'title'           => 'Login',
-    'description'     => 'Login with OAuth2.',
-    'page callback'   => 'oauth2_login_callback',
-    'access callback' => 'user_is_anonymous',
-  );
-  $items['oauth2/proxy'] = array(
-    'title'           => 'OAuth2 Proxy',
-    'description'     => 'OAuth2 Proxy For Mobile Apps.',
-    'page callback'   => 'oauth2_proxy_callback',
-    'access callback' => TRUE,
-  );
+    'user/oauth2_login' => [
+      'title'           => 'Login',
+      'description'     => 'Login with OAuth2.',
+      'page callback'   => 'oauth2_login_callback',
+      'access callback' => 'user_is_anonymous',
+    ],
+
+    'oauth2/proxy' => [
+      'title'           => 'OAuth2 Proxy',
+      'description'     => 'OAuth2 Proxy For Mobile Apps.',
+      'page callback'   => 'oauth2_proxy_callback',
+      'access callback' => TRUE,
+    ],
+  ];
 
   return $items;
 }
@@ -101,7 +103,7 @@ function _oauth2_proxy_login() {
   if (user_is_anonymous()) {
     $query = ['proxy' => 'true'] + $_GET;
     unset($query['q']);
-    drupal_goto('user/oauth2_login', array('query' => $query));
+    drupal_goto('user/oauth2_login', ['query' => $query]);
   }
   else {
     // Get the token.
@@ -111,10 +113,10 @@ function _oauth2_proxy_login() {
 
     $token_endpoint = $server_url . '/oauth2/token';
     $authorization_endpoint = $server_url . '/oauth2/authorize';
-    $redirect_uri = url('oauth2/authorized', array('absolute' => TRUE));
+    $redirect_uri = url('oauth2/authorized', ['absolute' => TRUE]);
     $auth_flow = 'server-side';
 
-    $oauth2 = new OAuth2\Client(array(
+    $oauth2 = new OAuth2\Client([
       'token_endpoint' => $token_endpoint,
       'auth_flow' => $auth_flow,
       'client_id' => $client_id,
@@ -122,7 +124,7 @@ function _oauth2_proxy_login() {
       'redirect_uri' => $redirect_uri,
       'authorization_endpoint' => $authorization_endpoint,
       'scope' => 'user_profile',
-    ));
+    ]);
     $oauth2->getAccessToken();
 
     $id = md5($token_endpoint . $client_id . $auth_flow);
@@ -155,7 +157,7 @@ function _oauth2_proxy_logout() {
 function oauth2_login($destination =NULL, $destination_error =NULL) {
   $enabled = variable_get('oauth2_login_enabled', FALSE);
   if (!$enabled) {
-    drupal_goto('user/login', array('query' => drupal_get_destination()));
+    drupal_goto('user/login', ['query' => drupal_get_destination()]);
     return;
   }
 
@@ -172,7 +174,7 @@ function oauth2_login($destination =NULL, $destination_error =NULL) {
     'destination_error' => $destination_error,
   ] + $_GET;
   unset($query['q']);
-  drupal_goto('hybridauth/window/DrupalOAuth2', array('query' => $query));
+  drupal_goto('hybridauth/window/DrupalOAuth2', ['query' => $query]);
 }
 
 /**
@@ -184,12 +186,10 @@ function oauth2_login_hybridauth_provider_config_alter(&$hybridauth_config, $pro
   $state = md5(uniqid(rand(), TRUE));
   $hybridauth_config['state'] = $state;
   $hybridauth_config['redirect_uri'] = oauth2_client_get_redirect_uri();
-  oauth2_client_set_redirect($state, array(
+  oauth2_client_set_redirect($state, [
       'uri' => 'hybridauth/endpoint',
-      'params' => array(
-        'hauth.done' => 'DrupalOAuth2',
-      )
-    ));
+      'params' => ['hauth.done' => 'DrupalOAuth2']
+    ]);
 }
 
 /**
@@ -213,13 +213,13 @@ function oauth2_login_hybridauth_user_login($account, $data) {
 
   $oauth2 = $adapter->adapter;
 
-  $token = array(
+  $token = [
     'access_token' => $oauth2->api->access_token,
     'refresh_token' => $oauth2->api->refresh_token,
     'expires_in' => $oauth2->api->access_token_expires_in,
     'expiration_time' => $oauth2->api->access_token_expires_at,
     'scope' => $oauth2->scope,
-  );
+  ];
 
   if (isset($_GET['proxy']) and $_GET['proxy'] == 'true') {
     $json_token = json_encode($token);
@@ -295,7 +295,5 @@ function oauth2_login_user_logout($account) {
  */
 function _logout_from_oauth2_server($token) {
   $oauth2_server = variable_get('oauth2_login_oauth2_server', '');
-  drupal_goto($oauth2_server . '/user/logout',
-    array('query' => array('token' => $token))
-  );
+  drupal_goto($oauth2_server . '/user/logout', ['query' => ['token' => $token]]);
 }

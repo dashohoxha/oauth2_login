@@ -18,15 +18,15 @@ function oauth2_login($destination =NULL, $destination_error =NULL) {
 
   $enabled = variable_get('oauth2_login_enabled', FALSE);
   if (!$enabled) {
-    drupal_goto('user', array('query' => drupal_get_destination()));
+    drupal_goto('user', ['query' => drupal_get_destination()]);
   }
   else {
-    drupal_goto('hybridauth/window/DrupalOAuth2', array(
-        'query' => array(
+    drupal_goto('hybridauth/window/DrupalOAuth2', [
+        'query' => [
           'destination' => $destination,
           'destination_error' => $destination_error,
-        )
-      ));
+        ]
+      ]);
   }
 }
 
@@ -42,9 +42,9 @@ function oauth2_login($destination =NULL, $destination_error =NULL) {
 function hook_oauth2_login_enabled($enabled) {
   // Enable or disable the link 'user/login'.
   db_update('menu_links')
-    ->fields(array(
+    ->fields([
         'hidden' => ($enabled ? 1 : 0),
-      ))
+      ])
     ->condition('menu_name', 'user-menu')
     ->condition('link_path', 'user/login')
     ->condition('router_path', 'user/login')
@@ -54,9 +54,9 @@ function hook_oauth2_login_enabled($enabled) {
 
   // Disable or enable the link 'user/oauth2_login'.
   db_update('menu_links')
-    ->fields(array(
+    ->fields([
         'hidden' => ($enabled ? 0 : 1),
-      ))
+      ])
     ->condition('menu_name', 'user-menu')
     ->condition('link_path', 'user/oauth2_login')
     ->condition('router_path', 'user/oauth2_login')
