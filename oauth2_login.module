@@ -75,10 +75,22 @@ function oauth2_login_menu() {
 }
 
 /**
+ * Implements hook_url_outbound_alter().
+ */
+function oauth2_login_url_outbound_alter(&$path, &$options, $original_path) {
+  // Keep track of the current page so that we can return back after login.
+  switch ($path) {
+    case 'user/oauth2_login':
+      $options['query']['page'] = request_uri();
+      break;
+  }
+}
+
+/**
  * Callback function for the menu user/oauth2_login.
  */
 function oauth2_login_callback() {
-  oauth2_login($destination = 'user');
+  oauth2_login($_GET['page']);
 }
 
 /**
