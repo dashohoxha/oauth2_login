@@ -80,6 +80,10 @@ function oauth2_login_menu() {
 function oauth2_login_url_outbound_alter(&$path, &$options, $original_path) {
   // Keep track of the current page so that we can return back after login.
   switch ($path) {
+    case 'user/login':
+    case 'user/logout':
+      $options['query']['destination'] = $_GET['q'];
+      break;
     case 'user/oauth2_login':
       $options['query']['page'] = request_uri();
       break;
