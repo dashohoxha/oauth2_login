@@ -1,0 +1,20 @@
+<?php
+/**
+ * @file
+ * Module file for oauth2_user.
+ */
+
+module_load_include('inc', 'oauth2_user', 'wsclient');
+module_load_include('inc', 'oauth2_user', 'profile');
+module_load_include('inc', 'oauth2_user', 'utils');
+
+/**
+ * Implements hook_init().
+ */
+function oauth2_user_init() {
+  // Check whether this is a redirect after login,
+  // and if yes call the submit function again.
+  if (oauth2_user_is_authenticated() and isset($_SESSION['oauth2_user']['form_state'])) {
+    oauth2_user_form_resubmit();
+  }
+}

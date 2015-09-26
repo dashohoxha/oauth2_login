@@ -1,0 +1,9 @@
+name = OAuth2 User
+description = Handles the user profile provided by an OAuth2 server.
+package = "OAuth2"
+core = 7.x
+
+dependencies[] = oauth2_login
+dependencies[] = wsclient
+dependencies[] = wsclient_rest
+dependencies[] = http_client
