@@ -22,3 +22,11 @@ The configuration of this module is done on:
 The test file helps to understand the configurations that should be
 done on the server and on the client:
 https://github.com/dashohoxha/oauth2_login/blob/7.x-1.x/tests/oauth2_login.test#L22
+
+Besides the module 'oauth2_login', there is also the sub-module
+'oauth2_user', which can be enabled optionally. It provides some
+functions that can be useful for managing the profile of the remote
+oauth2 user. This module can be useful out-of-the-box, or it can just
+serve as a template or example about how to manage the remote user
+profile. For more details about the available functions look at
+'oauth2_user.api.php'.
