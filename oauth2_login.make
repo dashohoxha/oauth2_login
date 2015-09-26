@@ -13,4 +13,4 @@ libraries[hybridauth][download][url] = https://github.com/hybridauth/hybridauth/
 
 libraries[hybridauth-drupaloauth2][directory_name] = hybridauth-drupaloauth2
 libraries[hybridauth-drupaloauth2][download][type] = get
-libraries[hybridauth-drupaloauth2][download][url] = https://github.com/B-Translator/hybridauth-drupaloauth2/archive/v1.2.tar.gz
+libraries[hybridauth-drupaloauth2][download][url] = https://github.com/FreeSoft-AL/hybridauth-drupaloauth2/archive/v1.2.tar.gz
