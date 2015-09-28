@@ -73,15 +73,3 @@ function oauth2_user_hybridauth_provider_config_alter(&$config, $provider_id) {
 function oauth2_user_hybridauth_user_login($account, $oauth2_user_data) {
   oauth2_user_save($oauth2_user_data);
 }
-
-/**
- * Implements hook_user_login().
- */
-function oauth2_user_user_login(&$edit, $account) {
-  if (oauth2_user_installed_on_server()) {
-    $oauth2_user = (array)oauth2_loginprovider_user_profile_callback();
-    $oauth2_user['displayName'] = $oauth2_user['name'];
-    $oauth2_user['identifier'] = $oauth2_user['uid'];
-    oauth2_user_save($oauth2_user);
-  }
-}

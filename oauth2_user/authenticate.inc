@@ -5,28 +5,20 @@
  */
 
 /**
- * Return true if oauth2_user is installed on the server.
+ * Implements hook_init().
  */
-function oauth2_user_installed_on_server() {
-  return module_exists('oauth2_loginprovider');
+function oauth2_user_init() {
+  // Check whether this is a redirect after login,
+  // and if yes call the submit function again.
+  if (oauth2_user_is_authenticated() and isset($_SESSION['oauth2_user']['form_state'])) {
+    oauth2_user_form_resubmit();
+  }
 }
 
 /**
- * Return true if the user is authenticated.
+ * Return true if the user has a valid oauth2 access token.
  */
 function oauth2_user_is_authenticated() {
-  if (oauth2_user_installed_on_server()) {
-    return user_is_logged_in();
-  }
-  else {
-    return oauth2_user_has_token();
-  }
-}
-
-/**
- * Return true if the user has an oauth2 access_token.
- */
-function oauth2_user_has_token() {
   $server_url = variable_get('oauth2_login_oauth2_server', '');
   $token_endpoint = $server_url . '/oauth2/token';
   $client_id = variable_get('oauth2_login_client_id', '');
@@ -37,7 +29,10 @@ function oauth2_user_has_token() {
   $token = oauth2_client_get_token($id);
 
   // Check the access token.
-  return !empty($token['access_token']);
+  if (empty($token['access_token'])) return FALSE;
+  if ($token['expiration_time'] < (time() + 10))  return FALSE;
+
+  return TRUE;
 }
 
 /**
@@ -53,14 +48,11 @@ function oauth2_user_authenticate($form_state, $redirection = FALSE) {
     return;
   }
 
+  // Save form_state
   $_SESSION['oauth2_user']['form_state'] = $form_state;
 
-  if (oauth2_user_installed_on_server()) {
-    drupal_goto('user/login', array('query' => drupal_get_destination()));
-  }
-  else {
-    oauth2_login();
-  }
+  // Redirect to login.
+  oauth2_login();
 }
 
 /**
