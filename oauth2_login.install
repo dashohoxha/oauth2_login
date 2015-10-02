@@ -8,8 +8,12 @@
  * Implements hook_enable().
  */
 function oauth2_login_enable() {
+  // Make sure that the hybriauth provider DrupalOAuth2 is enabled.
+  $hybridauth_providers = variable_get('hybridauth_providers');
+  $hybridauth_providers['DrupalOAuth2'] = 'DrupalOAuth2';
+  variable_set('hybridauth_providers', $hybridauth_providers);
+
   // Set default values to hybridauth variables.
-  variable_set('hybridauth_provider_DrupalOAuth2_enabled', TRUE);
   variable_set('hybridauth_duplicate_emails', '2');
   variable_set('hybridauth_pictures', 1);
   variable_set('hybridauth_username', '[user:hybridauth:displayName]');
@@ -42,6 +46,11 @@ function oauth2_login_disable() {
   variable_set('oauth2_login_enabled', FALSE);
   module_load_include('inc', 'oauth2_login', 'oauth2_login.admin');
   oauth2_login_call_hook_enabled();
+
+  // Disable hybriauth provider DrupalOAuth2.
+  $hybridauth_providers = variable_get('hybridauth_providers');
+  $hybridauth_providers['DrupalOAuth2'] = FALSE;
+  variable_set('hybridauth_providers', $hybridauth_providers);
 
   // Delete variables.
   variable_del('oauth2_login_enabled');
