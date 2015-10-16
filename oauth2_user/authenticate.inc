@@ -16,23 +16,11 @@ function oauth2_user_init() {
 }
 
 /**
- * Return true if the user has a valid oauth2 access token.
+ * Return true if the user has a valid oauth2 access_token.
  */
 function oauth2_user_is_authenticated() {
-  $server_url = variable_get('oauth2_login_oauth2_server', '');
-  $token_endpoint = $server_url . '/oauth2/token';
-  $client_id = variable_get('oauth2_login_client_id', '');
-  $auth_flow = 'server-side';
-
-  // Get the current access_token.
-  $id = md5($token_endpoint . $client_id . $auth_flow);
-  $token = oauth2_client_get_token($id);
-
-  // Check the access token.
-  if (empty($token['access_token'])) return FALSE;
-  if ($token['expiration_time'] < (time() + 10))  return FALSE;
-
-  return TRUE;
+  $access_token = oauth2_login_get_access_token($redirect=FALSE);
+  return ($access_token ? TRUE : FALSE);
 }
 
 /**
@@ -40,6 +28,14 @@ function oauth2_user_is_authenticated() {
  * But first save the given form_state in session.
  */
 function oauth2_user_authenticate($form_state, $redirection = FALSE) {
+  if (user_is_logged_in()) {
+    global $user;
+    $user = drupal_anonymous_user();
+    $dest = drupal_get_destination();
+    oauth2_login(NULL, $dest['destination']);
+    return;
+  }
+
   if ($redirection) {
     // We are in a redirect-after-login, but login has failed or was cancelled.
     // In this case we clear the session variable so that it does not keep
