@@ -31,8 +31,8 @@ function oauth2_user_default_wsclient_service() {
   $service->type = 'rest';
   $service->url = $server_url . '/oauth2/';
 
+  $service->settings['authentication']['oauth2'] = oauth2_login_get_oauth2_settings();
   $service->settings += oauth2_user_wsclient_dev_settings();
-  $service->settings += oauth2_user_wsclient_auth_settings();
   $service->operations = [
     'user_profile' => [
       'label' => 'user_profile',
@@ -68,29 +68,4 @@ function oauth2_user_wsclient_dev_settings() {
     $dev_settings['curl options'][CURLOPT_PROXY] = $proxy;
   }
   return $dev_settings;
-}
-
-/**
- * Return authentication settings.
- */
-function oauth2_user_wsclient_auth_settings() {
-  $server_url = variable_get('oauth2_login_oauth2_server', '');
-  $client_id = variable_get('oauth2_login_client_id', '');
-  $client_secret = variable_get('oauth2_login_client_secret', '');
-
-  $token_endpoint = $server_url . '/oauth2/token';
-  $authorization_endpoint = $server_url . '/oauth2/authorize';
-  $redirect_uri = url('oauth2/authorized', ['absolute' => TRUE]);
-
-  $auth_settings['authentication']['oauth2'] = [
-    'token_endpoint' => $token_endpoint,
-    'auth_flow' => 'server-side',
-    'client_id' => $client_id,
-    'client_secret' => $client_secret,
-    'redirect_uri' => $redirect_uri,
-    'authorization_endpoint' => $authorization_endpoint,
-    'scope' => 'user_profile',
-  ];
-
-  return $auth_settings;
 }

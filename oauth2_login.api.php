@@ -67,3 +67,36 @@ function hook_oauth2_login_enabled($enabled) {
   // Clear the cache and rebuild the menu.
   menu_cache_clear('user-menu');
 }
+
+/**
+ * Return oauth2 settings.
+ */
+function oauth2_login_get_oauth2_settings() {
+  $server_url = variable_get('oauth2_login_oauth2_server');
+  $oauth2_settings = [
+    'auth_flow' => 'server-side',
+    'authorization_endpoint' => $server_url . '/oauth2/authorize',
+    'token_endpoint' => $server_url . '/oauth2/token',
+    'client_id' => variable_get('oauth2_login_client_id'),
+    'client_secret' => variable_get('oauth2_login_client_secret'),
+    'redirect_uri' => url('oauth2/authorized', ['absolute' => TRUE]),
+    'scope' => 'user_profile',
+  ];
+  return $oauth2_settings;
+}
+
+/**
+ * Get an access_token, or NULL if there is no valid token.
+ *
+ * The token returned may be a cached one or a refreshed token.
+ * If the refresh_token has also expired, a redirection to the
+ * oauth2 server will be made, in order to re-authenticate.
+ * However the redirection will be skipped if the parameter
+ * $redirect is FALSE, and NULL will be returned as access_token.
+ */
+function oauth2_login_get_access_token($redirect = TRUE) {
+  $oauth2_settings = oauth2_login_get_oauth2_settings();
+  $oauth2 = new OAuth2\Client($oauth2_settings);
+  $access_token = $oauth2->getAccessToken($redirect);
+  return $access_token;
+}
