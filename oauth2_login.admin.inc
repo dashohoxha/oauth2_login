@@ -70,10 +70,8 @@ function oauth2_login_admin_settings() {
   ];
 
   $form = system_settings_form($form);
-  $form['#submit'] += [
-    'oauth2_login_admin_set_settings',
-    'oauth2_login_call_hook_enabled',
-  ];
+  $form['#submit'][] = 'oauth2_login_admin_set_settings';
+  $form['#submit'][] = 'oauth2_login_call_hook_enabled';
 
   return $form;
 }
