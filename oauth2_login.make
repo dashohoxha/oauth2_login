@@ -9,7 +9,7 @@ projects[hybridauth][version] = 2.14
 
 libraries[hybridauth][directory_name] = hybridauth
 libraries[hybridauth][download][type] = get
-libraries[hybridauth][download][url] = https://github.com/hybridauth/hybridauth/archive/v2.5.1.tar.gz
+libraries[hybridauth][download][url] = https://github.com/hybridauth/hybridauth/archive/2.5.1.tar.gz
 
 libraries[hybridauth-drupaloauth2][directory_name] = hybridauth-drupaloauth2
 libraries[hybridauth-drupaloauth2][download][type] = get
