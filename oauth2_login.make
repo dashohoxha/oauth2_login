@@ -3,9 +3,9 @@ core = 7.x
 
 defaults[projects][subdir] = contrib
 
-projects[oauth2_client][version] = 1.4
+projects[oauth2_client][version] = 1.5
 
-projects[hybridauth][version] = 2.14
+projects[hybridauth][version] = 2.15
 
 libraries[hybridauth][directory_name] = hybridauth
 libraries[hybridauth][download][type] = get
