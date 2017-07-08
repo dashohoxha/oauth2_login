@@ -3,7 +3,7 @@ core = 7.x
 
 defaults[projects][subdir] = contrib
 
-projects[oauth2_client][version] = 1.5
+projects[oauth2_client][version] = 2.0
 
 projects[hybridauth][version] = 2.15
 
