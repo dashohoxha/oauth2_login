@@ -145,6 +145,7 @@ function oauth2_login_get_oauth2_settings() {
     'client_secret' => variable_get('oauth2_login_client_secret'),
     'redirect_uri' => url('oauth2/authorized', ['absolute' => TRUE]),
     'scope' => 'user_profile',
+    'skip-ssl-verification' => variable_get('oauth2_login_skipssl', FALSE),
   ];
   return $oauth2_settings;
 }
