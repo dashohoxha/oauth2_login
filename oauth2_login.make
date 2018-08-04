@@ -5,11 +5,11 @@ defaults[projects][subdir] = contrib
 
 projects[oauth2_client][version] = 2.0
 
-projects[hybridauth][version] = 2.15
+projects[hybridauth][version] = 2.16
 
 libraries[hybridauth][directory_name] = hybridauth
 libraries[hybridauth][download][type] = get
-libraries[hybridauth][download][url] = https://github.com/hybridauth/hybridauth/archive/2.5.1.tar.gz
+libraries[hybridauth][download][url] = https://github.com/hybridauth/hybridauth/archive/2.11.0.tar.gz
 
 libraries[hybridauth-drupaloauth2][directory_name] = hybridauth-drupaloauth2
 libraries[hybridauth-drupaloauth2][download][type] = get
